@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyMaster AI</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#111827;
+    color:white;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#60a5fa;
+}
+
+textarea{
+    width:100%;
+    height:180px;
+    padding:15px;
+    font-size:16px;
+    border-radius:12px;
+    border:none;
+}
+
+button{
+    background:#3b82f6;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#2563eb;
+}
+
+.card{
+    background:#1f2937;
+    padding:15px;
+    margin-top:15px;
+    border-radius:12px;
+}
+
+.flashcard{
+    background:#2563eb;
+    padding:20px;
+    border-radius:15px;
+    margin:10px;
+    cursor:pointer;
+    text-align:center;
+    font-size:20px;
+}
+
+.correct{
+    color:lime;
+}
+
+.wrong{
+    color:red;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🎓 StudyMaster AI</h1>
+
+<textarea id="studyText"
+placeholder="Paste anything you want to study here..."></textarea>
+
+<br>
+
+<button onclick="generateStudy()">Generate Study Games</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+
+function generateStudy(){
+
+const text=document.getElementById("studyText").value;
+
+if(text.trim()==""){
+    alert("Paste something first!");
+    return;
+}
+
+const words=text.match(/\b[a-zA-Z]{5,}\b/g)||[];
+
+let output="";
+
+output+=`
+<div class="card">
+<h2>📝 Quiz</h2>
+`;
+
+for(let i=0;i<Math.min(10,words.length);i++){
+
+let word=words[Math.floor(Math.random()*words.length)];
+
+output+=`
+<p><b>Question ${i+1}:</b> Explain the term "<span style="color:#60a5fa">${word}</span>"</p>
+`;
+}
+
+output+="</div>";
+
+output+=`
+<div class="card">
+<h2>🧠 Flashcards</h2>
+`;
+
+let used=[];
+
+for(let i=0;i<Math.min(12,words.length);i++){
+
+let word=words[Math.floor(Math.random()*words.length)];
+
+if(!used.includes(word)){
+used.push(word);
+
+output+=`
+<div class="flashcard"
+onclick="flipCard(this,'${word}')">
+${word}
+</div>
+`;
+}
+}
+
+output+="</div>";
+
+output+=`
+<div class="card">
+<h2>🎮 Memory Challenge</h2>
+<p>Try to remember these words:</p>
+`;
+
+used.slice(0,8).forEach(word=>{
+output+=`<span style="padding:8px;">${word}</span>`;
+});
+
+output+=`
+<p style="margin-top:15px;">
+Hide them and see how many you can remember!
+</p>
+</div>
+`;
+
+document.getElementById("output").innerHTML=output;
+}
+
+function flipCard(card,word){
+
+if(card.dataset.flipped==="true"){
+card.innerHTML=word;
+card.dataset.flipped="false";
+}
+else{
+card.innerHTML="Think of the definition!";
+card.dataset.flipped="true";
+}
+
+}
+
+</script>
+
+</body>
+</html>
